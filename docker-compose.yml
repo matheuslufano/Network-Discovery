@@ -1,0 +1,55 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    environment:
+      - POSTGRES_DB=netbox
+      - POSTGRES_USER=netbox
+      - POSTGRES_PASSWORD=netbox
+    volumes:
+      - netbox-postgres:/var/lib/postgresql/data
+  redis:
+    image: redis:6
+  netbox:
+    image: netboxcommunity/netbox:latest
+    depends_on:
+      - postgres
+      - redis
+    environment:
+      - ALLOWED_HOSTS=*
+      - DEBUG=False
+      - DB_NAME=netbox
+      - DB_USER=netbox
+      - DB_PASSWORD=netbox
+      - DB_HOST=postgres
+      - REDIS_HOST=redis
+      - SUPERUSER_USERNAME=admin
+      - SUPERUSER_PASSWORD=admin
+      - SUPERUSER_EMAIL=admin@example.com
+    ports:
+      - 8001:8080
+    volumes:
+      - netbox-media:/etc/netbox/media
+  netbox-worker:
+    image: netboxcommunity/netbox:latest
+    command: /opt/netbox/start_workers.sh
+    depends_on:
+      - netbox
+  netbox-housekeeping:
+    image: netboxcommunity/netbox:latest
+    command: /opt/netbox/run_housekeeping.sh
+    depends_on:
+      - netbox
+  your-api:
+    build: .
+    depends_on:
+      - netbox
+    environment:
+      - NETBOX_URL=http://netbox:8080
+      - NETBOX_TOKEN=3782c686c8b44a8ce53d7469f5b11764cd0b77b7
+      - SIM_FILE=/app/simulated_snmp_data.json
+    ports:
+      - 8000:8000
+volumes:
+  netbox-postgres:
+  netbox-media:
