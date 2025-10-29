@@ -3,13 +3,6 @@
 ## O que este projeto faz
 Esta aplicação fornece uma API REST que simula a descoberta de dispositivos via SNMP (usando um arquivo JSON local `simulated_snmp_data.json`) e integra os dados com uma instância do NetBox via sua API REST. Ela cria/atualiza dispositivos, interfaces e endereços IP.
 
-## Estrutura do projeto
-- `app/` - código da aplicação FastAPI
-- `simulated_snmp_data.json` - fonte de dados simulada (fornecida)
-- `Dockerfile` - para construir a imagem da aplicação
-- `docker-compose.yml` - orquestra NetBox, Postgres, Redis e sua API
-- `README.md` - este arquivo
-
 ## Pré-requisitos
 - Docker e Docker Compose instalados
 - Pelo menos 4GB de RAM disponível (NetBox pode exigir recursos)
@@ -59,11 +52,3 @@ A API retorna um JSON com resumo das ações realizadas:
 curl -X POST http://localhost:8000/api/v/discover -H "Content-Type: application/json" -d '{"cidr":"192.168.1.0/29"}'
 ```
 
-## Pontos de melhoria (sugestões)
-- Implementar criação/consulta de `device_type`, `site` e `device_role` no NetBox.
-- Testes unitários e de integração.
-- Melhor tratamento de erros e retries para chamadas ao NetBox.
-- Sincronização para evitar duplicidade de interfaces ao rodar scans repetidos.
-
-## Licença
-MIT
